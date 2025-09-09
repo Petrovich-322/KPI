@@ -33,7 +33,7 @@ list = [
     88,
     true,
 ];
-
+console.log("Hello ");
 obj = {};
 
 for (const i in list){ 
