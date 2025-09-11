@@ -1,3 +1,5 @@
+'use strict';
+
 const fn = () => {
     const a = { name: "Yehor", };
     let b = { name: "Petrovich", };

@@ -1,3 +1,5 @@
+'use strict';
+
 const User = [
     { name: "Ivan_Petrenko", phone: "+380501112233" },
     { name: "Olena_Koval", phone: "+380671234567" },
@@ -6,7 +8,7 @@ const User = [
 ];
 
 let findPhoneByName = (name) => {
-    for(i in User){
+    for(const i in User){
         if(User[i].name == name) return User[i].phone
     }
 }

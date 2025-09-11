@@ -1,3 +1,5 @@
+'use strict';
+
 let inc = function inc (n) {
     return n+=321;
 }

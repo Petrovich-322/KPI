@@ -1,3 +1,5 @@
+'use strict';
+
 const random = (min = 0, max = 0) => {
     if(max == 0){
         max = min;

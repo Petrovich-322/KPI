@@ -1,9 +1,11 @@
+'use strict';
+
 const startIP = "127.0.0.1";
 const IP= [];
 
 let temp = "";
 
-for(i in startIP) {
+for(const i in startIP) {
     if(startIP[i] != ".") temp += startIP[i];
     else {
         IP.push(Number(temp));

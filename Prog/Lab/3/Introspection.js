@@ -1,6 +1,8 @@
+'use strict';
+
 const func = (iface) => {
   let res = [];
-  for(i in iface){
+  for(const i in iface){
     const count = iface[i].length;
     res.push([i, count]);
   }
