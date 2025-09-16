@@ -26,5 +26,4 @@ const cube = x => x ** 3;
 
 const f = pipe(inc, twice, cube);
 
-
 console.log(f(5));  
