@@ -48,7 +48,8 @@ const d = func(1, -1, 1);
 console.log(d);
 
 func = function sum (...arg) {
-    //console.dir({arg})
+    // console.dir({arg});
+    // console.dir({arguments});
     const sum = arg.reduce((sum, num) => sum + num, 0);
     return sum;   
 }
