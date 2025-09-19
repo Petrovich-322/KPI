@@ -12,7 +12,7 @@ function seq(data) {
         let point = func.length - 1, res = data;
         while(point >= 0) {
             const localFunc = func[point];
-            //console.dir(func[point]);
+            //console.log(func[point]);
             //console.log(res);
             res = localFunc(res);
             point--;
