@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 let func = function sum () {
     //console.dir({arguments});

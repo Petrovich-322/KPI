@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const User = [
     { name: "Ivan_Petrenko", phone: "+380501112233" },

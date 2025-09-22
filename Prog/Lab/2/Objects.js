@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const fn = () => {
     const a = { name: "Yehor", };

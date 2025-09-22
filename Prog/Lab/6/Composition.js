@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const composition = (...arg) => {
     const functionArray = [];

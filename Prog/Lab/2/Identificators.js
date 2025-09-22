@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 let name = "Yehor";
 const birthYear = 2008;

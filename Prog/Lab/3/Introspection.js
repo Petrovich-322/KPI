@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const func = (iface) => {
   let res = [];

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 let list = [
     true, 'hello', 5, 12, -200, false, false, 'word', true, 322, 52, '1',

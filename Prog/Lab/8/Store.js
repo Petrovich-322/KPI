@@ -1,3 +1,5 @@
+"use strict";
+
 const store = (num) => {
     const localNum = num;
     const func = () => {

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const func = [];
 //console.log(typeof(5) == "number");

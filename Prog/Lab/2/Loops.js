@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 function range(start, end){
     let array = [];

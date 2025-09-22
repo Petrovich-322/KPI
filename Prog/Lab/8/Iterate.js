@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 const iterate = (object, callback) => {
   const keys = Object.keys(object);

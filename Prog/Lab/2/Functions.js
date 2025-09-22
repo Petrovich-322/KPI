@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const average = (a, b) => (a+b)/2;
 const square = (x) => x**2;

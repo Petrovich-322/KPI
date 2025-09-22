@@ -1,3 +1,5 @@
+"use strict";
+
 const contract = (func, ...arg) => {
     const array = arg;
     let res = undefined;

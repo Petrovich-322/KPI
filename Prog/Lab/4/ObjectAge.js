@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const persons = {
   lenin: { born: 1870, died: 1924 },
