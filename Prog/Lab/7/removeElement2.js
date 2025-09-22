@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 const removeElement = (data, ...arg) => {
     for(const i in data){

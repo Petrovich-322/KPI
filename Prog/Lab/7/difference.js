@@ -1,3 +1,5 @@
+"use strict";
+
 const difference = (data1, data2) => {
     const res = [];
     for(const i of data1){

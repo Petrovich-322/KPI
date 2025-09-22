@@ -1,9 +1,9 @@
-'use strict'
+"use strict";
 
 const unique = (data) => {
     const res = [];
     for (const i of data){
-        check = true;
+        let check = true;
         for (const j of res){
             if (i == j){
                 check = false;
