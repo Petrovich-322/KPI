@@ -1,6 +1,6 @@
 ```mermaid
     erDiagram
-        Category ||--o{ Product : "містить"
+        Category }o--o{ Product : "містить"
         Product ||--o{ Stock : "обліковується"
         Location ||--o{ Stock : "зберігає"
         Product }o--o{ Supplier : "постачається"
