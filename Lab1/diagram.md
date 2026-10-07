@@ -18,11 +18,10 @@
 
         Product {
             string product_id PK
-            string category_id FK
             string name
             string brand
-            string sku
-            string barcode
+            string sku UK
+            string barcode UK
             int min_age
             decimal price
             string description
