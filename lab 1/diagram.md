@@ -1,83 +1,83 @@
 ```mermaid
 erDiagram
-    Category }o--o{ Product : "містить / належить"
-    Category }o--o{ Supplier : "постачає категорії"
+    KATEGORIYA["Категорія"] }o--o{ PRODUKT["Продукт"] : "містить / належить"
+    KATEGORIYA["Категорія"] }o--o{ POSTACHALNYK["Постачальник"] : "постачає категорії"
 
-    Product ||--o{ Stock : "обліковується"
-    Location ||--o{ Stock : "зберігає"
+    PRODUKT["Продукт"] |o--o{ ZAPAS["Запас"] : "обліковується"
+    LOKATSIYA["Локація"] |o--o{ ZAPAS["Запас"] : "зберігає"
 
-    Supplier ||--o{ SupplyOrder : "виконує"
-    Location |o--o{ SupplyOrder : "приймає"
-    User ||--o{ SupplyOrder : "відповідає за"
+    POSTACHALNYK["Постачальник"] ||--o{ POSTACHANNYA["Постачання"] : "виконує"
+    LOKATSIYA["Локація"] ||--o{ POSTACHANNYA["Постачання"] : "приймає"
+    KORISTUVACH["Користувач"] ||--o{ POSTACHANNYA["Постачання"] : "відповідає за"
 
-    Location |o--o{ User : "працює на"
+    LOKATSIYA["Локація"] |o--o{ KORISTUVACH["Користувач"] : "закріплює"
 
-    SupplyOrder ||--|{ SupplyOrderItem : "містить"
-    Product |o--o{ SupplyOrderItem : "фігурує в"
+    POSTACHANNYA["Постачання"] ||--|{ POZYTSIYA_POSTACHANNYA["Позиція в постачанні"] : "містить"
+    PRODUKT["Продукт"] ||--o{ POZYTSIYA_POSTACHANNYA["Позиція в постачанні"] : "фігурує в"
 
-    Category {
+    KATEGORIYA["Категорія"] {
         string id PK
-        string name
+        string nazva
     }
 
-    Product {
+    PRODUKT["Продукт"] {
         string id PK
-        string name
-        string brand
-        string sku UK
-        string barcode UK
-        int min_age
-        decimal price
-        string description
+        string nazva
+        string brend
+        string artykul UK
+        string shtrykhkod UK
+        int minimalnyi_vik
+        decimal tsina
+        string opys
     }
 
-    Location {
+    LOKATSIYA["Локація"] {
         string id PK
-        string name
-        string type
-        string address
-        boolean is_active
+        string nazva
+        string typ
+        string adressa
+        boolean chy_aktyvna
     }
 
-    Stock {
-        string id PK
-        string product_id FK
-        string location_id FK
-        int quantity
+    ZAPAS["Запас"] {
+        string id PK, UK
+        string posylannya_na_produkt FK
+        string posylannya_na_lokatsiyu FK
+        int kilkist
     }
 
-    Supplier {
+    POSTACHALNYK["Постачальник"] {
         string id PK
-        string name
-        string phone
-        string email
-        string description
+        string nazva
+        string telefon
+        string poshta
+        string opys
     }
 
-    SupplyOrder {
+    POSTACHANNYA["Постачання"] {
         string id PK
-        string supplier_id FK
-        string location_id FK
-        string user_id FK
-        time created_at
-        boolean is_active
+        string posylannya_na_postachalnyka FK
+        string posylannya_na_lokatsiyu FK
+        string posylannya_na_korystuvacha FK
+        time data
+        boolean chy_aktyvnyi
     }
 
-    SupplyOrderItem {
+    POZYTSIYA_POSTACHANNYA["Позиція в постачанні"] {
         string id PK
-        string supply_order_id FK
-        string product_id FK
-        int quantity
-        decimal purchase_price
+        string posylannya_na_postachannya FK
+        string posylannya_na_produkt FK
+        int kilkist
+        decimal tsina_zakupky
     }
 
-    User {
+    KORISTUVACH["Користувач"] {
         string id PK
-        string location_id FK
-        string name
-        string role
-        string phone
-        string email
-        boolean is_active
+        string posylannya_na_lokatsiyu FK
+        string imya
+        string rol
+        string telefon
+        string poshta
+        boolean chy_aktyvnyi
     }
 ```
