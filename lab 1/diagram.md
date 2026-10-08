@@ -1,30 +1,27 @@
 ```mermaid
 erDiagram
-    Category ||--o{ CategoryProduct : "містить"
-    Product ||--o{ CategoryProduct : "належить"
+    Category }o--o{ Product : "містить / належить"
+    Category }o--o{ Supplier : "постачає категорії"
 
     Product ||--o{ Stock : "обліковується"
     Location ||--o{ Stock : "зберігає"
 
-    Product ||--o{ ProductSupplier : "постачається"
-    Supplier ||--o{ ProductSupplier : "постачає"
-
     Supplier ||--o{ SupplyOrder : "виконує"
-    Location ||--o{ SupplyOrder : "приймає"
+    Location |o--o{ SupplyOrder : "приймає"
     User ||--o{ SupplyOrder : "відповідає за"
 
-    Location |o--o{ User : "закріплює"
+    Location |o--o{ User : "працює на"
 
-    SupplyOrder ||--|{ SupplyOrderItem : "включає"
-    Product ||--o{ SupplyOrderItem : "фігурує в"
+    SupplyOrder ||--|{ SupplyOrderItem : "містить"
+    Product |o--o{ SupplyOrderItem : "фігурує в"
 
     Category {
-        string category_id PK
+        string id PK
         string name
     }
 
     Product {
-        string product_id PK
+        string id PK
         string name
         string brand
         string sku UK
@@ -34,50 +31,40 @@ erDiagram
         string description
     }
 
-    CategoryProduct {
-        string category_id PK, FK
-        string product_id PK, FK
-    }
-
     Location {
-        string location_id PK
+        string id PK
         string name
         string type
         string address
-        string status
+        boolean is_active
     }
 
     Stock {
-        string stock_id PK
+        string id PK
         string product_id FK
         string location_id FK
         int quantity
     }
 
     Supplier {
-        string supplier_id PK
+        string id PK
         string name
         string phone
         string email
         string description
     }
 
-    ProductSupplier {
-        string product_id PK, FK
-        string supplier_id PK, FK
-    }
-
     SupplyOrder {
-        string supply_order_id PK
+        string id PK
         string supplier_id FK
         string location_id FK
         string user_id FK
-        timestamp date
-        string status
+        time created_at
+        boolean is_active
     }
 
     SupplyOrderItem {
-        string supply_order_item_id PK
+        string id PK
         string supply_order_id FK
         string product_id FK
         int quantity
@@ -85,12 +72,12 @@ erDiagram
     }
 
     User {
-        string user_id PK
+        string id PK
         string location_id FK
         string name
         string role
         string phone
         string email
-        string state
+        boolean is_active
     }
 ```
