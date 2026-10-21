@@ -3,8 +3,8 @@ erDiagram
     KATEGORIYA }o--o{ PRODUKT : "містить / належить"
     KATEGORIYA }o--o{ POSTACHALNYK : "постачає категорії"
 
-    PRODUKT |o--o{ ZAPAS : "обліковується"
-    LOKATSIYA |o--o{ ZAPAS : "зберігає"
+    PRODUKT ||--o{ ZAPAS : "обліковується"
+    LOKATSIYA ||--o{ ZAPAS : "зберігає"
 
     POSTACHALNYK ||--o{ POSTACHANNYA : "виконує"
     LOKATSIYA ||--o{ POSTACHANNYA : "приймає"
