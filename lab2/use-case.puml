@@ -12,22 +12,34 @@ Manager --|> Employee
 Worker --|> Employee
 Admin --|> Employee
 
-rectangle "Система обліку постачань" {
+rectangle "Система обліку постачань\n(клієнт і сервер)" {
+
     usecase "Увійти в систему" as Login
+
     usecase "Створити постачання" as Create
-    usecase "Перевірити дані постачання" as Validate
+    usecase "Перевірити дані\nпостачання" as Validate
+    usecase "Зберегти постачання\nлокально" as SaveDraft
+
     usecase "Запросити сповіщення\nвідповідального" as Notify
-    usecase "Переглянути постачання" as View
+    usecase "Повідомити про\nнедоступність сповіщень" as NotifyFailure
+    usecase "Повторити запит\nна сповіщення" as RetryNotify
+
+    usecase "Переглянути постачання" as ViewSupply
+    usecase "Переглянути залишки" as ViewStock
+    usecase "Зберегти отримані\nдані локально" as Cache
+    usecase "Переглянути збережені\nпостачання" as CachedSupply
+    usecase "Переглянути збережені\nзалишки" as CachedStock
+
     usecase "Прийняти постачання" as Accept
     usecase "Оновити запаси та\nзавершити постачання" as Update
-    usecase "Переглянути залишки" as Stock
-    usecase "Повідомити про\nнедоступність сповіщень" as NotifyFailure
 }
 
 Employee -- Login
-Employee -- View
+Employee -- ViewSupply
+Employee -- ViewStock
+Employee -- CachedSupply
+Employee -- CachedStock
 Employee -- Accept
-Employee -- Stock
 
 Manager -- Create
 Admin -- Create
@@ -36,32 +48,62 @@ Notifications -- Notify
 
 Create ..> Validate : <<include>>
 Create ..> Notify : <<include>>
-Accept ..> Update : <<include>>
+
+SaveDraft ..> Create : <<extend>>\n[сервер недоступний]
+
+ViewSupply ..> Cache : <<include>>
+ViewStock ..> Cache : <<include>>
 
 NotifyFailure ..> Notify : <<extend>>\n[сервіс недоступний]
+RetryNotify ..> Notify : <<include>>
+
+Accept ..> Update : <<include>>
 
 note bottom of Create
-  Запит на сповіщення виконується
-  лише після успішної перевірки
-  та збереження постачання.
+  Онлайн: перевірка, збереження,
+  потім запит на сповіщення.
+  Офлайн: лише локальне збереження
+  введених даних; серверні кроки
+  не виконуються.
+  Точка розширення:
+  доступність сервера.
+end note
+
+note bottom of Notify
+  Точка розширення:
+  результат звернення до сервісу.
+  Помилка сповіщення
+  не скасовує постачання.
+end note
+
+note bottom of RetryNotify
+  Виконується автоматично після
+  відновлення доступності сервісу,
+  якщо сповіщення не надіслане.
+end note
+
+note bottom of Cache
+  Зберігаються лише успішно
+  отримані постачання та залишки.
+end note
+
+note bottom of CachedSupply
+  Перегляд раніше отриманих даних,
+  зокрема за відсутності зв'язку.
+  Автоматичну синхронізацію
+  вимоги поки не визначають.
 end note
 
 note bottom of Accept
   Лише постачання своєї локації.
   Для робітника складу —
   також призначене саме йому.
+  Офлайн-приймання не визначене.
 end note
 
-note bottom of View
-  Постачання, пов'язані
+note bottom of ViewSupply
+  Лише постачання, пов'язані
   з працівником і його локацією.
-end note
-
-note bottom of Notify
-  Точка розширення:
-  результат звернення до сервісу.
-  Недоступність сервісу
-  не скасовує постачання.
 end note
 
 @enduml
