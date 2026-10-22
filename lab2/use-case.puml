@@ -17,7 +17,6 @@ rectangle "Система обліку постачань\n(клієнт і се
     usecase "Увійти в систему" as Login
 
     usecase "Створити постачання" as Create
-    usecase "Перевірити дані\nпостачання" as Validate
     usecase "Зберегти постачання\nлокально" as SaveDraft
 
     usecase "Запросити сповіщення\nвідповідального" as Notify
@@ -46,8 +45,6 @@ Admin -- Create
 
 Notifications -- Notify
 
-Create ..> Validate : <<include>>
-Create ..> Notify : <<include>>
 
 SaveDraft ..> Create : <<extend>>\n[сервер недоступний]
 
@@ -59,9 +56,10 @@ RetryNotify ..> Notify : <<include>>
 
 Accept ..> Update : <<include>>
 
-note bottom of Create
+note top of Create
   Онлайн: перевірка, збереження,
-  потім запит на сповіщення.
+  потім запит на сповіщення
+  (описаний у Notify).
   Офлайн: лише локальне збереження
   введених даних; серверні кроки
   не виконуються.
@@ -76,7 +74,7 @@ note bottom of Notify
   не скасовує постачання.
 end note
 
-note bottom of RetryNotify
+note top of RetryNotify
   Виконується автоматично після
   відновлення доступності сервісу,
   якщо сповіщення не надіслане.
@@ -87,7 +85,7 @@ note bottom of Cache
   отримані постачання та залишки.
 end note
 
-note bottom of CachedSupply
+note top of CachedSupply
   Перегляд раніше отриманих даних,
   зокрема за відсутності зв'язку.
   Автоматичну синхронізацію
