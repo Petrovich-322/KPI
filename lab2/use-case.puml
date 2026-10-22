@@ -45,7 +45,6 @@ Admin -- Create
 
 Notifications -- Notify
 
-
 SaveDraft ..> Create : <<extend>>\n[сервер недоступний]
 
 ViewSupply ..> Cache : <<include>>
@@ -56,7 +55,7 @@ RetryNotify ..> Notify : <<include>>
 
 Accept ..> Update : <<include>>
 
-note top of Create
+note bottom of Create
   Онлайн: перевірка, збереження,
   потім запит на сповіщення
   (описаний у Notify).
@@ -74,7 +73,7 @@ note bottom of Notify
   не скасовує постачання.
 end note
 
-note top of RetryNotify
+note bottom of RetryNotify
   Виконується автоматично після
   відновлення доступності сервісу,
   якщо сповіщення не надіслане.
@@ -85,7 +84,7 @@ note bottom of Cache
   отримані постачання та залишки.
 end note
 
-note top of CachedSupply
+note bottom of CachedSupply
   Перегляд раніше отриманих даних,
   зокрема за відсутності зв'язку.
   Автоматичну синхронізацію
