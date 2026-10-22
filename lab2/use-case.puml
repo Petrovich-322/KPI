@@ -15,22 +15,21 @@ Admin --|> Employee
 rectangle "Система обліку постачань\n(клієнт і сервер)" {
 
     usecase "Увійти в систему" as Login
-
     usecase "Створити постачання" as Create
-    usecase "Зберегти постачання\nлокально" as SaveDraft
+    usecase "Зберегти постачання локально" as SaveDraft
 
-    usecase "Запросити сповіщення\nвідповідального" as Notify
-    usecase "Повідомити про\nнедоступність сповіщень" as NotifyFailure
-    usecase "Повторити запит\nна сповіщення" as RetryNotify
+    usecase "Запросити сповіщення працівника" as Notify
+    usecase "Повідомити про недоступність сповіщень" as NotifyFailure
+    usecase "Повторити запит на сповіщення" as RetryNotify
 
     usecase "Переглянути постачання" as ViewSupply
     usecase "Переглянути залишки" as ViewStock
-    usecase "Зберегти отримані\nдані локально" as Cache
-    usecase "Переглянути збережені\nпостачання" as CachedSupply
-    usecase "Переглянути збережені\nзалишки" as CachedStock
+    usecase "Зберегти отримані дані локально" as Cache
+    usecase "Переглянути збережені постачання" as CachedSupply
+    usecase "Переглянути збережені залишки" as CachedStock
 
     usecase "Прийняти постачання" as Accept
-    usecase "Оновити запаси та\nзавершити постачання" as Update
+    usecase "Оновити запаси та завершити постачання" as Update
 }
 
 Employee -- Login
@@ -42,10 +41,12 @@ Employee -- Accept
 
 Manager -- Create
 Admin -- Create
+Manager -- SaveDraft
+Admin -- SaveDraft
 
 Notifications -- Notify
 
-SaveDraft ..> Create : <<extend>>\n[сервер недоступний]
+Create ..> Notify : <<include>>
 
 ViewSupply ..> Cache : <<include>>
 ViewStock ..> Cache : <<include>>
@@ -55,50 +56,59 @@ RetryNotify ..> Notify : <<include>>
 
 Accept ..> Update : <<include>>
 
-note bottom of Create
-  Онлайн: перевірка, збереження,
-  потім запит на сповіщення
-  (описаний у Notify).
-  Офлайн: лише локальне збереження
-  введених даних; серверні кроки
-  не виконуються.
-  Точка розширення:
-  доступність сервера.
+note top of Create
+  Передумова: сервер доступний.
+  Перевірка даних і збереження
+  передують запиту на сповіщення.
+  Некоректні дані переривають процес
+  до збереження та сповіщення.
 end note
 
-note bottom of Notify
+note top of SaveDraft
+  За недоступного сервера введені
+  дані зберігаються лише на клієнті.
+  Постачання на сервері не створюється,
+  запит на сповіщення не надсилається.
+  Автоматичну синхронізацію
+  вимоги поки не визначають.
+end note
+
+note top of Notify
   Точка розширення:
   результат звернення до сервісу.
   Помилка сповіщення
-  не скасовує постачання.
+  не скасовує збережене постачання.
 end note
 
-note bottom of RetryNotify
+note top of RetryNotify
   Виконується автоматично після
   відновлення доступності сервісу,
   якщо сповіщення не надіслане.
 end note
 
-note bottom of Cache
+note top of Cache
   Зберігаються лише успішно
   отримані постачання та залишки.
 end note
 
-note bottom of CachedSupply
-  Перегляд раніше отриманих даних,
+note top of CachedSupply
+  Перегляд раніше отриманих постачань,
   зокрема за відсутності зв'язку.
-  Автоматичну синхронізацію
-  вимоги поки не визначають.
 end note
 
-note bottom of Accept
+note top of CachedStock
+  Перегляд раніше отриманих залишків,
+  зокрема за відсутності зв'язку.
+end note
+
+note top of Accept
   Лише постачання своєї локації.
   Для робітника складу —
   також призначене саме йому.
   Офлайн-приймання не визначене.
 end note
 
-note bottom of ViewSupply
+note top of ViewSupply
   Лише постачання, пов'язані
   з працівником і його локацією.
 end note
