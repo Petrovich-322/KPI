@@ -1,0 +1,67 @@
+@startuml
+left to right direction
+skinparam shadowing false
+
+actor "Працівник" as Employee
+actor "Менеджер магазину" as Manager
+actor "Робітник складу" as Worker
+actor "Адміністратор" as Admin
+actor "Система сповіщень" as Notifications
+
+Manager --|> Employee
+Worker --|> Employee
+Admin --|> Employee
+
+rectangle "Система обліку постачань" {
+    usecase "Увійти в систему" as Login
+    usecase "Створити постачання" as Create
+    usecase "Перевірити дані постачання" as Validate
+    usecase "Запросити сповіщення\nвідповідального" as Notify
+    usecase "Переглянути постачання" as View
+    usecase "Прийняти постачання" as Accept
+    usecase "Оновити запаси та\nзавершити постачання" as Update
+    usecase "Переглянути залишки" as Stock
+    usecase "Повідомити про\nнедоступність сповіщень" as NotifyFailure
+}
+
+Employee -- Login
+Employee -- View
+Employee -- Accept
+Employee -- Stock
+
+Manager -- Create
+Admin -- Create
+
+Notifications -- Notify
+
+Create ..> Validate : <<include>>
+Create ..> Notify : <<include>>
+Accept ..> Update : <<include>>
+
+NotifyFailure ..> Notify : <<extend>>\n[сервіс недоступний]
+
+note bottom of Create
+  Запит на сповіщення виконується
+  лише після успішної перевірки
+  та збереження постачання.
+end note
+
+note bottom of Accept
+  Лише постачання своєї локації.
+  Для робітника складу —
+  також призначене саме йому.
+end note
+
+note bottom of View
+  Постачання, пов'язані
+  з працівником і його локацією.
+end note
+
+note bottom of Notify
+  Точка розширення:
+  результат звернення до сервісу.
+  Недоступність сервісу
+  не скасовує постачання.
+end note
+
+@enduml
