@@ -1,6 +1,8 @@
 @startuml
 left to right direction
 skinparam shadowing false
+skinparam nodesep 30
+skinparam ranksep 45
 
 actor "Працівник" as Employee
 actor "Менеджер магазину" as Manager
@@ -13,104 +15,113 @@ Worker --|> Employee
 Admin --|> Employee
 
 rectangle "Система обліку постачань\n(клієнт і сервер)" {
-
     usecase "Увійти в систему" as Login
     usecase "Створити постачання" as Create
     usecase "Зберегти постачання локально" as SaveDraft
-
     usecase "Запросити сповіщення працівника" as Notify
     usecase "Повідомити про недоступність сповіщень" as NotifyFailure
     usecase "Повторити запит на сповіщення" as RetryNotify
-
     usecase "Переглянути постачання" as ViewSupply
     usecase "Переглянути залишки" as ViewStock
     usecase "Зберегти отримані дані локально" as Cache
     usecase "Переглянути збережені постачання" as CachedSupply
     usecase "Переглянути збережені залишки" as CachedStock
-
     usecase "Прийняти постачання" as Accept
     usecase "Оновити запаси та завершити постачання" as Update
 }
 
-Employee -- Login
-Employee -- ViewSupply
-Employee -- ViewStock
-Employee -- CachedSupply
-Employee -- CachedStock
-Employee -- Accept
-
-Manager -- Create
-Admin -- Create
-Manager -- SaveDraft
-Admin -- SaveDraft
-
-Notifications -- Notify
+Employee -right- Login
+Employee -right- ViewSupply
+Employee -right- ViewStock
+Employee -right- CachedSupply
+Employee -right- CachedStock
+Employee -right- Accept
+Manager -right- Create
+Admin -right- Create
+Manager -right- SaveDraft
+Admin -right- SaveDraft
+Notify -right- Notifications
 
 Create ..> Notify : <<include>>
-
 ViewSupply ..> Cache : <<include>>
 ViewStock ..> Cache : <<include>>
-
 NotifyFailure ..> Notify : <<extend>>\n[сервіс недоступний]
 RetryNotify ..> Notify : <<include>>
-
 Accept ..> Update : <<include>>
 
 note top of Create
-  Передумова: сервер доступний.
-  Перевірка даних і збереження
-  передують запиту на сповіщення.
-  Некоректні дані переривають процес
-  до збереження та сповіщення.
+  Сервер доступний. Перевірка всіх реквізитів
+  і позицій, потім збереження на сервері.
+  Запит на сповіщення — лише після успіху.
+  Помилка перевірки або збереження
+  перериває процес до запиту.
 end note
 
-note top of SaveDraft
-  За недоступного сервера введені
-  дані зберігаються лише на клієнті.
-  Постачання на сервері не створюється,
-  запит на сповіщення не надсилається.
-  Автоматичну синхронізацію
-  вимоги поки не визначають.
+note bottom of SaveDraft
+  Без сервера введені дані залишаються
+  на клієнті; постачання на сервері
+  не створюється, сповіщення не викликається.
+  Автосинхронізація — поза обсягом.
+  Ліміти зберігання визначені NFR.
 end note
 
 note top of Notify
-  Точка розширення:
-  результат звернення до сервісу.
-  Помилка сповіщення
-  не скасовує збережене постачання.
+  Звернення до зовнішнього сервісу
+  для сповіщення активного відповідального.
+  Точка розширення: результат звернення.
+  Include означає запит, а не гарантію доставки.
+end note
+
+note bottom of NotifyFailure
+  Автор отримує повідомлення про недоступність.
+  Збережене постачання не скасовується.
 end note
 
 note top of RetryNotify
-  Виконується автоматично після
-  відновлення доступності сервісу,
+  Автоматично після відновлення сервісу,
   якщо сповіщення не надіслане.
 end note
 
-note top of Cache
-  Зберігаються лише успішно
-  отримані постачання та залишки.
-end note
-
-note top of CachedSupply
-  Перегляд раніше отриманих постачань,
-  зокрема за відсутності зв'язку.
-end note
-
-note top of CachedStock
-  Перегляд раніше отриманих залишків,
-  зокрема за відсутності зв'язку.
-end note
-
-note top of Accept
-  Лише постачання своєї локації.
-  Для робітника складу —
-  також призначене саме йому.
-  Офлайн-приймання не визначене.
+note bottom of Cache
+  Лише успішно отримані дані.
+  Обсяг і строк зберігання визначені NFR.
 end note
 
 note top of ViewSupply
-  Лише постачання, пов'язані
-  з працівником і його локацією.
+  Постачання, пов’язані з працівником
+  та його локацією.
+end note
+
+note bottom of ViewStock
+  Залишки локації працівника.
+end note
+
+note top of CachedSupply
+  Раніше отримані постачання,
+  доступні без звернення до сервера.
+end note
+
+note bottom of CachedStock
+  Раніше отримані залишки,
+  доступні без звернення до сервера.
+end note
+
+note top of Accept
+  Лише своя локація; для робітника складу —
+  також призначене саме йому постачання.
+  Часткове приймання — поза обсягом.
+end note
+
+note bottom of Update
+  Збільшити запаси за всіма позиціями,
+  створити відсутні записи та завершити
+  постачання. Пара продукт–локація унікальна.
+end note
+
+note top of Login
+  Вхід визначає роль і локацію.
+  Авторизація — передумова захищених дій,
+  а не include у кожному use case.
 end note
 
 @enduml
