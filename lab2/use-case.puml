@@ -1,127 +1,106 @@
 @startuml
-left to right direction
+top to bottom direction
+
 skinparam shadowing false
-skinparam nodesep 30
-skinparam ranksep 45
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 70
+skinparam defaultFontName Arial
+skinparam defaultFontSize 15
+skinparam actorFontSize 15
+skinparam usecaseFontSize 15
+skinparam usecase {
+  BackgroundColor #F5FBFF
+  BorderColor #315A78
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #315A78
+  FontStyle bold
+}
+skinparam note {
+  BackgroundColor #F0FFF9
+  BorderColor #20B89A
+  FontColor #145B4D
+}
 
 actor "Працівник" as Employee
 actor "Менеджер магазину" as Manager
 actor "Робітник складу" as Worker
 actor "Адміністратор" as Admin
-actor "Система сповіщень" as Notifications
 
 Manager --|> Employee
 Worker --|> Employee
 Admin --|> Employee
 
-rectangle "Система обліку постачань\n(клієнт і сервер)" {
-    usecase "Увійти в систему" as Login
-    usecase "Створити постачання" as Create
-    usecase "Зберегти постачання локально" as SaveDraft
-    usecase "Запросити сповіщення працівника" as Notify
-    usecase "Повідомити про недоступність сповіщень" as NotifyFailure
-    usecase "Повторити запит на сповіщення" as RetryNotify
-    usecase "Переглянути постачання" as ViewSupply
-    usecase "Переглянути залишки" as ViewStock
-    usecase "Зберегти отримані дані локально" as Cache
-    usecase "Переглянути збережені постачання" as CachedSupply
-    usecase "Переглянути збережені залишки" as CachedStock
-    usecase "Прийняти постачання" as Accept
-    usecase "Оновити запаси та завершити постачання" as Update
+rectangle "Система обліку постачань\n(клієнт і сервер)" as System {
+  usecase "Увійти в систему" as Login
+  usecase "Створити постачання" as Create
+  usecase "Зберегти постачання\nлокально" as SaveDraft
+  usecase "Переглянути постачання" as ViewSupply
+  usecase "Переглянути збережені\nпостачання" as CachedSupply
+  usecase "Прийняти постачання" as Accept
+  usecase "Переглянути залишки" as ViewStock
+  usecase "Переглянути збережені\nзалишки" as CachedStock
+
+  note right of Create
+    Онлайн: перевірити дані,
+    зберегти на сервері, тоді
+    запитати сервіс сповіщень.
+    Відмова сервісу не скасовує
+    збережене постачання.
+  end note
+
+  note right of Accept
+    Після підтвердження система
+    оновлює залишки та завершує
+    постачання.
+  end note
+
+  note right of ViewStock
+    Успішно отримані дані про
+    постачання й залишки система
+    зберігає локально.
+  end note
 }
 
+' Розташування use cases у стовпчик зменшує перетини ліній.
+Login -[hidden]down- Create
+Create -[hidden]down- SaveDraft
+SaveDraft -[hidden]down- ViewSupply
+ViewSupply -[hidden]down- CachedSupply
+CachedSupply -[hidden]down- Accept
+Accept -[hidden]down- ViewStock
+ViewStock -[hidden]down- CachedStock
+
 Employee -right- Login
-Employee -right- ViewSupply
-Employee -right- ViewStock
 Employee -right- CachedSupply
 Employee -right- CachedStock
-Employee -right- Accept
+
+Worker -right- ViewSupply
+Worker -right- ViewStock
+Worker -right- Accept
+
 Manager -right- Create
 Admin -right- Create
 Manager -right- SaveDraft
 Admin -right- SaveDraft
-Notify -right- Notifications
+Manager -right- ViewSupply
+Admin -right- ViewSupply
+Manager -right- ViewStock
+Admin -right- ViewStock
+Manager -right- Accept
+Admin -right- Accept
 
-Create ..> Notify : <<include>>
-ViewSupply ..> Cache : <<include>>
-ViewStock ..> Cache : <<include>>
-NotifyFailure ..> Notify : <<extend>>\n[сервіс недоступний]
-RetryNotify ..> Notify : <<include>>
-Accept ..> Update : <<include>>
+Accept ..> ViewSupply : <<include>>
+CachedSupply ..> ViewSupply : <<extend>>\n[немає зв'язку]
+CachedStock ..> ViewStock : <<extend>>\n[немає зв'язку]
 
-note top of Create
-  Сервер доступний. Перевірка всіх реквізитів
-  і позицій, потім збереження на сервері.
-  Запит на сповіщення — лише після успіху.
-  Помилка перевірки або збереження
-  перериває процес до запиту.
-end note
-
-note bottom of SaveDraft
-  Без сервера введені дані залишаються
-  на клієнті; постачання на сервері
-  не створюється, сповіщення не викликається.
-  Автосинхронізація — поза обсягом.
-  Ліміти зберігання визначені NFR.
-end note
-
-note top of Notify
-  Звернення до зовнішнього сервісу
-  для сповіщення активного відповідального.
-  Точка розширення: результат звернення.
-  Include означає запит, а не гарантію доставки.
-end note
-
-note bottom of NotifyFailure
-  Автор отримує повідомлення про недоступність.
-  Збережене постачання не скасовується.
-end note
-
-note top of RetryNotify
-  Автоматично після відновлення сервісу,
-  якщо сповіщення не надіслане.
-end note
-
-note bottom of Cache
-  Лише успішно отримані дані.
-  Обсяг і строк зберігання визначені NFR.
-end note
-
-note top of ViewSupply
-  Постачання, пов’язані з працівником
-  та його локацією.
-end note
-
-note bottom of ViewStock
-  Залишки локації працівника.
-end note
-
-note top of CachedSupply
-  Раніше отримані постачання,
-  доступні без звернення до сервера.
-end note
-
-note bottom of CachedStock
-  Раніше отримані залишки,
-  доступні без звернення до сервера.
-end note
-
-note top of Accept
-  Лише своя локація; для робітника складу —
-  також призначене саме йому постачання.
-  Часткове приймання — поза обсягом.
-end note
-
-note bottom of Update
-  Збільшити запаси за всіма позиціями,
-  створити відсутні записи та завершити
-  постачання. Пара продукт–локація унікальна.
-end note
-
-note top of Login
-  Вхід визначає роль і локацію.
-  Авторизація — передумова захищених дій,
-  а не include у кожному use case.
+note bottom of System
+  Система сповіщень є зовнішнім сервісом, але не актором.
+  Запит і повтор запиту — кроки сценарію створення постачання.
+  «Зберегти постачання локально» працює без сервера;
+  воно не створює постачання на сервері.
 end note
 
 @enduml
